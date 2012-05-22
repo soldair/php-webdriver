@@ -133,21 +133,25 @@ abstract class PHPWebDriver_WebDriverBase {
 
     $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt(
-      $curl,
-      CURLOPT_HTTPHEADER,
-      array(
-        'Content-Type: application/json;charset=UTF-8',
-        'Accept: application/json'));
+    $header = array(
+      'Content-Type: application/json;charset=UTF-8',
+      'Accept: application/json');
 
     if ($http_method === 'POST') {
       curl_setopt($curl, CURLOPT_POST, true);
       if ($params && is_array($params)) {
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
+      } else {
+        $header[] = 'Content-length: 0';
       }
     } else if ($http_method == 'DELETE') {
       curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
     }
+
+    curl_setopt(
+      $curl,
+      CURLOPT_HTTPHEADER,
+      $header);
 
     foreach ($extra_opts as $option => $value) {
       curl_setopt($curl, $option, $value);
